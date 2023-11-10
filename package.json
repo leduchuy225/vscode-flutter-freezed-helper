@@ -1,13 +1,13 @@
 {
-  "name": "vscode-flutter-freezed-helper",
-  "displayName": "Flutter freezed Helpers",
+  "name": "vscode-flutter-build-runner-helper",
+  "displayName": "Flutter Build Runner Helpers",
   "description": "Helper utilities for flutter projects",
   "version": "0.1.0",
-  "publisher": "mthuong",
-  "icon": "media/flutter.png",
+  "publisher": "ELYuh-tool",
+  "icon": "media/avatar.jpg",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mthuong/vscode-flutter-freezed-helper"
+    "url": "https://github.com/leduchuy225/vscode-flutter-freezed-helper"
   },
   "engines": {
     "vscode": "^1.62.0"
@@ -15,28 +15,22 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:flutterFreezedHelper.genModel",
-    "onCommand:flutterFreezedHelper.genModelWatch"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "flutterFreezedHelper.genModel",
-        "title": "Flutter Freezed Helper: Code gen for freezed Classes"
-      },
-      {
-        "command": "flutterFreezedHelper.genModelWatch",
-        "title": "Flutter Freezed Helper: Toggle Watch mode for Code gen for freezed Classes"
+        "command": "flutterBuildRunnerHelper.buildRunnerSingleFile",
+        "title": "FFH: Run build-runner on selected file"
       }
     ],
-    "snippets": [
-      {
-        "language": "dart",
-        "path": "./dart.json"
-      }
-    ]
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "flutterBuildRunnerHelper.buildRunnerSingleFile"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

@@ -1,129 +1,77 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import { spawn, ChildProcess } from "child_process";
-import * as kill from "tree-kill";
+import { exec, spawn } from "child_process";
 
-let _channel: vscode.OutputChannel;
-let _watchProcess: ChildProcess;
+const handleFileName = (name: string) => {
+  const partName = name.split(".");
+  partName.splice(partName.length - 1, 0, "*");
 
-function getOutputChannel(): vscode.OutputChannel {
-  if (!_channel) {
-    _channel = vscode.window.createOutputChannel("Flutter Freezed Helper Logs");
-  }
+  return partName.join(".");
+};
 
-  return _channel;
-}
+// const handleOutput = (data: string) => {
+//   const partData = data.split("\n");
+//   return partData[partData.length - 1];
+// };
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+export function deactivate() {}
+
 export function activate(context: vscode.ExtensionContext) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  console.log(
-    'Congratulations, your extension "vscode-flutter-freezed-helper" is now active!'
-  );
+  const buildRunnerSingleFile = (uri: vscode.Uri) => {
+    console.log(uri);
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand(
-    "flutterFreezedHelper.genModel",
-    () => {
-      // The code you place here will be executed every time your command is executed
+    const filePath = uri.fsPath;
 
-      let process = spawn(
-        "flutter",
-        [
-          "packages",
-          "pub",
-          "run",
-          "build_runner",
-          "build",
-          "--delete-conflicting-outputs",
-        ],
-        {
-          shell: true,
-          cwd: vscode.workspace.rootPath,
-          // detached: true
-        }
-      );
+    const libIndex = filePath.indexOf("lib/");
 
-      process.stdout.on("data", (data) => {
-        console.log(`stdout: ${data}`);
-        getOutputChannel().appendLine(data);
-      });
+    const path = filePath.substring(libIndex);
+    const partition = path.split("/");
+    const fileName = handleFileName(partition[partition.length - 1]);
 
-      process.stderr.on("data", (data) => {
-        console.error(`stderr: ${data}`);
-        getOutputChannel().appendLine(data);
-      });
+    partition.pop();
+    partition.push(fileName);
 
-      process.on("close", (code) => {
-        console.log(`child process exited with code ${code}`);
-        getOutputChannel().appendLine(`child process exited with code ${code}`);
-      });
+    const newPath = partition.join("/");
 
-      // Display a message box to the user
-      //   vscode.window.showInformationMessage("Hello World!");
-    }
-  );
+    console.log(vscode.workspace.workspaceFile);
 
-  context.subscriptions.push(disposable);
+    const cwd = filePath.substring(0, libIndex);
+
+    console.log(cwd);
+    console.log(newPath);
+
+    // exec(
+    //   `${cwd} flutter pub run build_runner build --delete-conflicting-outputs --build-filter='${newPath}'`,
+    //   (err, stdout, stderr) => {
+    //     console.log("stdout: " + stdout);
+    //     if (stderr) {
+    //       vscode.window.showErrorMessage(stderr);
+    //     }
+    //     if (err) {
+    //       console.log("error: " + err);
+    //     }
+    //   }
+    // );
+
+    const process = spawn(
+      `flutter pub run build_runner build --delete-conflicting-outputs --build-filter='${newPath}'`,
+      { shell: true, cwd: cwd }
+    );
+    process.stdout.on("data", (data) => {
+      vscode.window.showInformationMessage(data);
+    });
+    process.stderr.on("data", (data) => {
+      vscode.window.showErrorMessage(data);
+    });
+  };
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      "flutterFreezedHelper.genModelWatch",
-      () => {
-        if (_watchProcess && !_watchProcess.killed) {
-          vscode.window.showInformationMessage("Stopped Codegen Process");
-          kill(_watchProcess.pid);
-          _watchProcess.kill();
-        } else {
-          vscode.window.showInformationMessage("Started Codegen Process");
-          _watchProcess = spawn(
-            "flutter",
-            [
-              "packages",
-              "pub",
-              "run",
-              "build_runner",
-              "watch",
-              "--delete-conflicting-outputs",
-            ],
-            {
-              shell: true,
-              cwd: vscode.workspace.rootPath,
-              //   detached: true
-            }
-          );
-
-          _watchProcess.stdout.on("data", (data) => {
-            console.log(`stdout: ${data}`);
-            getOutputChannel().appendLine(data);
-          });
-
-          _watchProcess.stderr.on("data", (data) => {
-            console.error(`stderr: ${data}`);
-            getOutputChannel().appendLine(data);
-          });
-
-          _watchProcess.on("close", (code) => {
-            console.log(`child process exited with code ${code}`);
-            getOutputChannel().appendLine(
-              `child process exited with code ${code}`
-            );
-          });
-        }
+      "flutterBuildRunnerHelper.buildRunnerSingleFile",
+      (clickedFile: vscode.Uri) => {
+        buildRunnerSingleFile(clickedFile);
       }
     )
   );
-}
-
-// this method is called when your extension is deactivated
-export function deactivate() {
-  if (_watchProcess && !_watchProcess.killed) {
-    kill(_watchProcess.pid);
-    _watchProcess.kill();
-  }
 }

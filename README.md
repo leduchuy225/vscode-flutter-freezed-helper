@@ -1,4 +1,4 @@
-# Flutter Freezed Helpers VSCode Extension
+<!-- # Flutter Freezed Helpers VSCode Extension
 
 This extension currently helps you to easily write `freezed` annotated classes and allows you to run code generation for those classes. You can also watch the files so that code generation is faster.
 
@@ -39,4 +39,4 @@ dependencies:
 
 ## Credits
 
-The idea for this extension came from aksharpatel47's extension <https://github.com/aksharpatel47/vscode_flutter_helper>
+The idea for this extension came from aksharpatel47's extension <https://github.com/aksharpatel47/vscode_flutter_helper> -->
