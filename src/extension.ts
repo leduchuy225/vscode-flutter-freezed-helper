@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
           "run",
           "build_runner",
           "build",
-          "--delete-conflicting-outputs"
+          "--delete-conflicting-outputs",
         ],
         {
           shell: true,
@@ -49,17 +49,17 @@ export function activate(context: vscode.ExtensionContext) {
         }
       );
 
-      process.stdout.on("data", data => {
+      process.stdout.on("data", (data) => {
         console.log(`stdout: ${data}`);
         getOutputChannel().appendLine(data);
       });
 
-      process.stderr.on("data", data => {
+      process.stderr.on("data", (data) => {
         console.error(`stderr: ${data}`);
         getOutputChannel().appendLine(data);
       });
 
-      process.on("close", code => {
+      process.on("close", (code) => {
         console.log(`child process exited with code ${code}`);
         getOutputChannel().appendLine(`child process exited with code ${code}`);
       });
@@ -72,48 +72,51 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(disposable);
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("flutterFreezedHelper.genModelWatch", () => {
-      if (_watchProcess && !_watchProcess.killed) {
-        vscode.window.showInformationMessage("Stopped Codegen Process");
-        kill(_watchProcess.pid);
-        _watchProcess.kill();
-      } else {
-        vscode.window.showInformationMessage("Started Codegen Process");
-        _watchProcess = spawn(
-          "flutter",
-          [
-            "packages",
-            "pub",
-            "run",
-            "build_runner",
-            "watch",
-            "--delete-conflicting-outputs"
-          ],
-          {
-            shell: true,
-            cwd: vscode.workspace.rootPath
-            //   detached: true
-          }
-        );
-
-        _watchProcess.stdout.on("data", data => {
-          console.log(`stdout: ${data}`);
-          getOutputChannel().appendLine(data);
-        });
-
-        _watchProcess.stderr.on("data", data => {
-          console.error(`stderr: ${data}`);
-          getOutputChannel().appendLine(data);
-        });
-
-        _watchProcess.on("close", code => {
-          console.log(`child process exited with code ${code}`);
-          getOutputChannel().appendLine(
-            `child process exited with code ${code}`
+    vscode.commands.registerCommand(
+      "flutterFreezedHelper.genModelWatch",
+      () => {
+        if (_watchProcess && !_watchProcess.killed) {
+          vscode.window.showInformationMessage("Stopped Codegen Process");
+          kill(_watchProcess.pid);
+          _watchProcess.kill();
+        } else {
+          vscode.window.showInformationMessage("Started Codegen Process");
+          _watchProcess = spawn(
+            "flutter",
+            [
+              "packages",
+              "pub",
+              "run",
+              "build_runner",
+              "watch",
+              "--delete-conflicting-outputs",
+            ],
+            {
+              shell: true,
+              cwd: vscode.workspace.rootPath,
+              //   detached: true
+            }
           );
-        });
+
+          _watchProcess.stdout.on("data", (data) => {
+            console.log(`stdout: ${data}`);
+            getOutputChannel().appendLine(data);
+          });
+
+          _watchProcess.stderr.on("data", (data) => {
+            console.error(`stderr: ${data}`);
+            getOutputChannel().appendLine(data);
+          });
+
+          _watchProcess.on("close", (code) => {
+            console.log(`child process exited with code ${code}`);
+            getOutputChannel().appendLine(
+              `child process exited with code ${code}`
+            );
+          });
+        }
       }
-    })
+    )
   );
 }
 
