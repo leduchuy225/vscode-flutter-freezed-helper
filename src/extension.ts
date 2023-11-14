@@ -47,36 +47,75 @@ export function activate(context: vscode.ExtensionContext) {
     console.log(cwd);
     console.log(newPath);
 
-    vscode.window.withProgress(
-      {
-        cancellable: false,
-        title: "Build_runner is running...",
-        location: vscode.ProgressLocation.Notification,
-      },
-      async (
-        progress: vscode.Progress<{ message?: string; increment?: number }>,
-        _: vscode.CancellationToken
-      ) => {
-        progress.report({ increment: 0 });
-
-        const process = spawn(
-          `flutter pub run build_runner build --build-filter='${newPath}'`,
-          { shell: true, cwd: cwd }
-        );
-
-        let result = "";
-        process.stdout.on("data", (data) => {
-          progress.report({ message: data.toString() });
-          result += data.toString();
-        });
-        process.on("close", (_) => {
-          console.log(result);
-
-          progress.report({ increment: 100 });
-          vscode.window.showInformationMessage(handleOutput(result));
-        });
-      }
+    const notification = vscode.window.setStatusBarMessage(
+      "$(loading) Build_Runner is running..."
     );
+
+    const process = spawn(
+      `flutter pub run build_runner build --build-filter='${newPath}'`,
+      { shell: true, cwd: cwd }
+    );
+
+    let stderrOnData = "";
+    process.stderr.on("data", (error) => {
+      stderrOnData += error;
+      console.log("stderr on data", error.toString());
+    });
+
+    let result = "";
+    process.stdout.on("data", (data) => {
+      result += data.toString();
+    });
+    process.on("close", (_) => {
+      notification.dispose();
+
+      if (stderrOnData) {
+        console.log("stderrOnData", stderrOnData);
+        vscode.window.showErrorMessage(stderrOnData);
+      }
+      if (result) {
+        console.log("stdoutOnData", result);
+        vscode.window.showInformationMessage(handleOutput(result));
+      }
+    });
+  };
+
+  const runFlutterPubGet = (uri: vscode.Uri) => {
+    console.log(uri);
+
+    const filePath = uri.fsPath;
+    const libIndex = filePath.indexOf("lib/");
+
+    const cwd = filePath.substring(0, libIndex);
+
+    const notification = vscode.window.setStatusBarMessage(
+      "$(loading) Pub_Get is running..."
+    );
+
+    const process = spawn("flutter pub get", { shell: true, cwd: cwd });
+
+    let stderrOnData = "";
+    process.stderr.on("data", (error) => {
+      stderrOnData += error;
+      console.log("stderr on data", error.toString());
+    });
+
+    let result = "";
+    process.stdout.on("data", (data) => {
+      result += data.toString();
+    });
+    process.on("close", (_) => {
+      notification.dispose();
+
+      if (stderrOnData) {
+        console.log("stderrOnData", stderrOnData);
+        vscode.window.showErrorMessage(stderrOnData);
+      }
+      if (result) {
+        console.log("stdoutOnData", result);
+        vscode.window.showInformationMessage(handleOutput(result));
+      }
+    });
   };
 
   context.subscriptions.push(
@@ -84,6 +123,12 @@ export function activate(context: vscode.ExtensionContext) {
       "flutterBuildRunnerHelper.buildRunnerOnClick",
       (clickedFile: vscode.Uri) => {
         buildRunnerOnClick(clickedFile);
+      }
+    ),
+    vscode.commands.registerCommand(
+      "flutterBuildRunnerHelper.pubGetOnClick",
+      (clickedFile: vscode.Uri) => {
+        runFlutterPubGet(clickedFile);
       }
     )
   );

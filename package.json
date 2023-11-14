@@ -1,43 +1,60 @@
 {
-  "name": "vscode-flutter-build-runner-helper",
-  "displayName": "Flutter Build Runner Helpers",
-  "description": "Helper utilities for flutter projects",
+  "name": "vscode-flutter-build-runner-on-click",
+  "displayName": "Build Runner On Click",
   "version": "0.1.0",
-  "publisher": "ELYuh-tool",
-  "icon": "media/avatar.jpg",
+  "description": "Run build_runner command on selected item with right click",
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "build_runner",
+    "right click",
+    "flutter build",
+    "build-filter",
+    "flutter"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/leduchuy225/vscode-flutter-freezed-helper"
   },
-  "engines": {
-    "vscode": "^1.62.0"
+  "author": {
+    "name": "EL Yuh",
+    "email": "leduchuy220%@gmail.com"
   },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [],
+  "publisher": "ELYuh-tool",
   "main": "./out/extension.js",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js",
+    "vscode:prepublish": "npm run compile",
+    "watch": "tsc -watch -p ./"
+  },
   "contributes": {
     "commands": [
       {
         "command": "flutterBuildRunnerHelper.buildRunnerOnClick",
-        "title": "FFH Build-runner on selected item"
+        "title": "FBR Build-runner on selected item"
+      },
+      {
+        "command": "flutterBuildRunnerHelper.pubGetOnClick",
+        "title": "FBR Flutter pub get"
       }
     ],
     "menus": {
       "explorer/context": [
         {
           "command": "flutterBuildRunnerHelper.buildRunnerOnClick"
+        },
+        {
+          "command": "flutterBuildRunnerHelper.pubGetOnClick"
         }
       ]
     }
   },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile",
-    "test": "node ./out/test/runTest.js"
+  "activationEvents": [],
+  "dependencies": {
+    "fs": "^0.0.1-security"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",
@@ -50,7 +67,8 @@
     "typescript": "^3.3.1",
     "vscode-test": "^1.0.0-next.0"
   },
-  "dependencies": {
-    "fs": "^0.0.1-security"
-  }
+  "engines": {
+    "vscode": "^1.62.0"
+  },
+  "icon": "media/appicon.png"
 }
