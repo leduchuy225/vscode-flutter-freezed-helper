@@ -48,7 +48,7 @@ export function activate(context: vscode.ExtensionContext) {
     console.log(newPath);
 
     const notification = vscode.window.setStatusBarMessage(
-      "$(loading) Build_Runner is running..."
+      "$(loading~spin) Build_Runner is running..."
     );
 
     const process = spawn(
@@ -89,7 +89,7 @@ export function activate(context: vscode.ExtensionContext) {
     const cwd = filePath.substring(0, libIndex);
 
     const notification = vscode.window.setStatusBarMessage(
-      "$(loading) Pub_Get is running..."
+      "$(loading~spin) Pub_Get is running..."
     );
 
     const process = spawn("flutter pub get", { shell: true, cwd: cwd });
