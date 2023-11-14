@@ -1,7 +1,7 @@
 {
   "name": "vscode-flutter-build-runner-on-click",
   "displayName": "Build Runner On Click",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "Run build_runner command on selected item with right click",
   "categories": [
     "Other"

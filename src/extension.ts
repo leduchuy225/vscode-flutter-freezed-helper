@@ -24,7 +24,7 @@ export function deactivate() {}
 
 export function activate(context: vscode.ExtensionContext) {
   const buildRunnerOnClick = (uri: vscode.Uri) => {
-    console.log(uri);
+    // console.log(uri);
 
     const isForlder = fs.lstatSync(uri.fsPath).isDirectory();
 
@@ -44,8 +44,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     const cwd = filePath.substring(0, libIndex);
 
-    console.log(cwd);
-    console.log(newPath);
+    // console.log(cwd);
+    // console.log(newPath);
 
     const notification = vscode.window.setStatusBarMessage(
       "$(loading~spin) Build_Runner is running..."
@@ -59,7 +59,7 @@ export function activate(context: vscode.ExtensionContext) {
     let stderrOnData = "";
     process.stderr.on("data", (error) => {
       stderrOnData += error;
-      console.log("stderr on data", error.toString());
+      // console.log("stderr on data", error.toString());
     });
 
     let result = "";
@@ -81,7 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
   };
 
   const runFlutterPubGet = (uri: vscode.Uri) => {
-    console.log(uri);
+    // console.log(uri);
 
     const filePath = uri.fsPath;
     const libIndex = filePath.indexOf("lib/");
@@ -97,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
     let stderrOnData = "";
     process.stderr.on("data", (error) => {
       stderrOnData += error;
-      console.log("stderr on data", error.toString());
+      // console.log("stderr on data", error.toString());
     });
 
     let result = "";
